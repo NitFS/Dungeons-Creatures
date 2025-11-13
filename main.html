@@ -1,0 +1,4144 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мастерская персонажей D&D</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Все предыдущие стили остаются без изменений */
+        :root {
+            --primary: #2c1810;
+            --secondary: #8b4513;
+            --accent: #daa520;
+            --success: #2e8b57;
+            --warning: #cd853f;
+            --light: #f5f5dc;
+            --dark: #1a0f0a;
+            --text: #8b7355;
+            --background: #f4e4bc;
+            --card-bg: #fff8e1;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+            --border-radius: 8px;
+            --parchment: #f4e4bc;
+            --gold: #daa520;
+            --bronze: #cd7f32;
+            --leather: #8b4513;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><rect fill="%238b4513" x="0" y="0" width="100" height="100"/><path fill="%23daa520" d="M0 0L100 100M100 0L0 100"/></svg>');
+        }
+        
+        .app-header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: var(--accent);
+            position: relative;
+            box-shadow: 0 4px 12px var(--shadow);
+            border-bottom: 4px solid var(--accent);
+        }
+        
+        .app-header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .app-header p {
+            font-style: italic;
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+            color: var(--light);
+        }
+        
+        .app-nav {
+            display: flex;
+            justify-content: center;
+            background: var(--primary);
+            padding: 0.5rem;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .app-nav button {
+            background: linear-gradient(to bottom, var(--secondary) 0%, var(--primary) 100%);
+            border: 1px solid var(--accent);
+            color: var(--light);
+            padding: 0.75rem 1.5rem;
+            margin: 0 0.25rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .app-nav button:hover {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--secondary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .app-nav button.active {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            font-weight: bold;
+            border: 1px solid var(--gold);
+        }
+        
+        .app-main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .app-footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--primary);
+            color: var(--light);
+            margin-top: 2rem;
+            border-top: 2px solid var(--accent);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .library-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .library-character-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: var(--transition);
+            border: 2px solid var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .library-character-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--warning) 100%);
+        }
+        
+        .library-character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+        
+        .character-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--secondary);
+        }
+        
+        .character-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            border: 2px solid var(--accent);
+        }
+        
+        .character-basic-info h3 {
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .character-basic-info p {
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        
+        .character-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--light);
+            border-radius: 5px;
+            border: 1px solid var(--secondary);
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text);
+            text-transform: uppercase;
+        }
+        
+        .character-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .resources-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .resource-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            border: 2px solid var(--secondary);
+            position: relative;
+        }
+        
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--warning) 100%);
+        }
+        
+        .resource-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .resource-meter {
+            height: 20px;
+            background: var(--light);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .resource-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .resource-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            border: 1px solid var(--gold);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to bottom, var(--warning) 0%, var(--accent) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to bottom, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--light);
+            border: 1px solid var(--accent);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(to bottom, var(--primary) 0%, var(--secondary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(to bottom, #8b0000 0%, #660000 100%);
+            color: var(--light);
+            border: 1px solid #ff0000;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(to bottom, #660000 0%, #8b0000 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .random-btn {
+            background: linear-gradient(135deg, var(--warning) 0%, var(--accent) 100%);
+            color: var(--dark);
+            border: 1px solid var(--gold);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-left: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .random-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .random-btn:active {
+            transform: translateY(0);
+        }
+        
+        .random-section-btn {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--light);
+            border: 1px solid var(--accent);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 0.5rem 0;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .random-section-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .random-full-btn {
+            background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+            color: var(--dark);
+            border: 1px solid var(--gold);
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin: 1rem auto;
+            font-size: 1.1rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .random-full-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+        
+        .name-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .name-input-group input {
+            flex: 1;
+        }
+        
+        .random-buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .dice-popup {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+            border: 2px solid var(--accent);
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .dice-popup.show {
+            display: block;
+        }
+        
+        .dice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--light);
+            padding: 1rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .dice-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .close-dice {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .dice-content {
+            padding: 1rem;
+        }
+        
+        .dice-controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .dice-btn {
+            background: linear-gradient(to bottom, var(--light) 0%, #e0d8c0 100%);
+            border: 1px solid var(--secondary);
+            padding: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .dice-btn:hover {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            transform: translateY(-2px);
+        }
+        
+        .dice-result {
+            background: var(--light);
+            border-radius: 5px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            border: 1px solid var(--secondary);
+        }
+        
+        .dice-result-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 0.5rem 0;
+            transition: var(--transition);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dice-history {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .dice-history-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--light);
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .custom-roll {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .custom-roll input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            background: var(--light);
+        }
+        
+        .custom-roll button {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            border: 1px solid var(--gold);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .custom-roll button:hover {
+            background: linear-gradient(to bottom, var(--warning) 0%, var(--accent) 100%);
+            transform: translateY(-2px);
+        }
+        
+        .dice-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--warning) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            transition: var(--transition);
+            border: 2px solid var(--gold);
+        }
+        
+        .dice-icon:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, var(--warning) 0%, var(--accent) 100%);
+        }
+        
+        .dice-animation {
+            animation: diceRoll 0.5s ease-in-out;
+        }
+        
+        @keyframes diceRoll {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            25% {
+                transform: rotate(90deg) scale(1.1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.2);
+            }
+            75% {
+                transform: rotate(270deg) scale(1.1);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+        
+        .critical-hit {
+            color: var(--success);
+            font-weight: bold;
+            animation: criticalPulse 0.5s ease-in-out 3;
+        }
+        
+        .critical-fail {
+            color: #8b0000;
+            font-weight: bold;
+            animation: failPulse 0.5s ease-in-out 3;
+        }
+        
+        @keyframes criticalPulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes failPulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.8);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .creation-wizard {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: var(--transition);
+            border: 2px solid var(--secondary);
+        }
+        
+        .wizard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: var(--light);
+            padding: 1.5rem;
+            position: relative;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .wizard-header h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+            font-family: 'Times New Roman', serif;
+            color: var(--accent);
+        }
+        
+        .wizard-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin-top: 1.5rem;
+        }
+        
+        .wizard-progress::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(218, 165, 32, 0.3);
+            z-index: 1;
+        }
+        
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            opacity: 0.6;
+            transition: var(--transition);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .progress-step.active {
+            opacity: 1;
+        }
+        
+        .progress-step.active .step-number {
+            background: var(--accent);
+            color: var(--dark);
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px rgba(218, 165, 32, 0.3);
+        }
+        
+        .progress-step.active .step-title {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(218, 165, 32, 0.3);
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            transition: var(--transition);
+            position: relative;
+            z-index: 2;
+            border: 1px solid var(--accent);
+        }
+        
+        .step-title {
+            font-size: 0.8rem;
+            text-align: center;
+            transition: var(--transition);
+            color: var(--light);
+        }
+        
+        .wizard-content {
+            padding: 2rem;
+        }
+        
+        .wizard-step {
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .wizard-step.active {
+            display: block;
+        }
+        
+        .wizard-step h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            background: var(--light);
+            font-size: 1rem;
+            color: var(--text);
+            transition: var(--transition);
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.3);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--secondary);
+        }
+        
+        .back-btn,
+        .next-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .back-btn {
+            background: linear-gradient(to bottom, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--light);
+            border: 1px solid var(--accent);
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(to bottom, var(--primary) 0%, var(--secondary) 100%);
+            transform: translateY(-2px);
+        }
+        
+        .back-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .back-btn:disabled:hover {
+            background: linear-gradient(to bottom, var(--secondary) 0%, var(--primary) 100%);
+            transform: none;
+        }
+        
+        .next-btn {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            border: 1px solid var(--gold);
+        }
+        
+        .next-btn:hover {
+            background: linear-gradient(to bottom, var(--warning) 0%, var(--accent) 100%);
+            transform: translateY(-2px);
+        }
+        
+        .skills-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .skills-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+        
+        .skill-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            background: var(--light);
+        }
+        
+        .skill-item:hover:not(.disabled) {
+            background: #e0d8c0;
+            transform: translateX(5px);
+            border-color: var(--accent);
+        }
+        
+        .skill-item.selected {
+            background: linear-gradient(to right, var(--accent) 0%, var(--warning) 100%);
+            border-color: var(--accent);
+            color: var(--dark);
+        }
+        
+        .skill-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .skill-checkbox {
+            margin-right: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .skill-info {
+            flex: 1;
+        }
+        
+        .skill-name {
+            font-weight: bold;
+        }
+        
+        .skill-ability {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .skill-bonus {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .skill-description {
+            flex: 0 0 300px;
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 5px;
+            height: fit-content;
+            border: 1px solid var(--secondary);
+        }
+        
+        .skill-description h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .skill-description p {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .selected-skills {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--secondary);
+        }
+        
+        .selected-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .selected-tag {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            border: 1px solid var(--gold);
+        }
+        
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .ability-card {
+            background: var(--light);
+            border-radius: 5px;
+            padding: 1rem;
+            border: 1px solid var(--secondary);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .ability-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+        
+        .ability-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .ability-score {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .ability-modifier {
+            font-size: 1rem;
+            color: var(--text);
+        }
+        
+        .method-selection {
+            margin-bottom: 1.5rem;
+        }
+        
+        .method-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .method-buttons button {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            background: var(--light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .method-buttons button.active {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            border-color: var(--gold);
+        }
+        
+        .method-buttons button:hover {
+            background: #e0d8c0;
+        }
+        
+        .equipment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .equipment-category {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--secondary);
+        }
+        
+        .equipment-item-select {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: 5px;
+        }
+        
+        .equipment-item-select:hover {
+            background: #e0d8c0;
+        }
+        
+        .equipment-item-select.selected {
+            background: linear-gradient(to right, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            border-radius: 5px;
+        }
+        
+        .equipment-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--secondary);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        /* Стили для детальной страницы персонажа */
+        
+        .character-detail-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            border: 2px solid var(--secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .character-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .character-detail-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--secondary);
+            border: 3px solid var(--accent);
+        }
+        
+        .character-detail-info h2 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-family: 'Times New Roman', serif;
+            font-size: 2rem;
+        }
+        
+        .character-detail-meta {
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+        
+        .character-detail-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--secondary);
+            flex-wrap: wrap;
+        }
+        
+        .character-detail-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--light);
+            border: 1px solid var(--secondary);
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .character-detail-tab.active {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--warning) 100%);
+            color: var(--dark);
+            border-color: var(--accent);
+        }
+        
+        .character-detail-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .character-detail-content.active {
+            display: block;
+        }
+        
+        .resources-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .resource-control-card {
+            background: var(--light);
+            border-radius: 5px;
+            padding: 1.5rem;
+            border: 1px solid var(--secondary);
+            text-align: center;
+        }
+        
+        .resource-control-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .resource-control-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 1rem 0;
+        }
+        
+        .resource-control-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .back-to-library {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(to bottom, var(--secondary) 0%, var(--primary) 100%);
+            color: var(--light);
+            border: 1px solid var(--accent);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .back-to-library:hover {
+            background: linear-gradient(to bottom, var(--primary) 0%, var(--secondary) 100%);
+            transform: translateY(-2px);
+        }
+        
+        .abilities-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .ability-detail-card {
+            background: var(--light);
+            border-radius: 5px;
+            padding: 1rem;
+            border: 1px solid var(--secondary);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .ability-detail-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+        
+        .ability-detail-name {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .ability-detail-score {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .ability-detail-modifier {
+            font-size: 1rem;
+            color: var(--text);
+        }
+        
+        .skills-detail-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .skill-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--light);
+            border-radius: 5px;
+            border: 1px solid var(--secondary);
+        }
+        
+        .skill-detail-item.proficient {
+            background: linear-gradient(to right, rgba(218, 165, 32, 0.2) 0%, rgba(205, 133, 63, 0.2) 100%);
+            border-color: var(--accent);
+        }
+        
+        .equipment-detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .equipment-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--light);
+            border-radius: 5px;
+            border: 1px solid var(--secondary);
+        }
+        
+        .no-character-selected {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text);
+        }
+        
+        .no-character-selected i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Новые стили для управления снаряжением */
+        .equipment-management {
+            margin-top: 1rem;
+        }
+        
+        .add-equipment-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .add-equipment-form input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--secondary);
+            border-radius: 5px;
+            background: var(--light);
+        }
+        
+        .equipment-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--light);
+            border-radius: 5px;
+            border: 1px solid var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .equipment-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        /* Стили для описания навыков */
+        .skill-full-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 5px;
+            border: 1px solid var(--secondary);
+        }
+        
+        .skill-full-info h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .skill-usage {
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--secondary);
+        }
+        
+        /* Анимация кубика */
+        .dice-animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .dice-3d {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s ease-out;
+            transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        }
+        
+        .dice-face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dice-face-1 { transform: translateZ(50px); }
+        .dice-face-2 { transform: rotateY(90deg) translateZ(50px); }
+        .dice-face-3 { transform: rotateX(90deg) translateZ(50px); }
+        .dice-face-4 { transform: rotateX(-90deg) translateZ(50px); }
+        .dice-face-5 { transform: rotateY(-90deg) translateZ(50px); }
+        .dice-face-6 { transform: rotateY(180deg) translateZ(50px); }
+        
+        .dice-result-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--accent);
+            z-index: 10001;
+            animation: popIn 0.5s ease;
+        }
+        
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .dice-result-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 1rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dice-result-text {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .race-class-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .race-class-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+        
+        .race-class-tooltip {
+            position: relative;
+            cursor: help;
+        }
+        
+        .race-class-tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            white-space: nowrap;
+            z-index: 10;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gold-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .gold-control button {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        /* Адаптивность */
+        
+        @media (max-width: 1200px) {
+            .app-main {
+                padding: 1.5rem;
+            }
+            .equipment-options {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .skills-container {
+                flex-direction: column;
+            }
+            .skill-description {
+                flex: 1;
+            }
+            .abilities-grid {
+                grid-template-columns: 1fr;
+            }
+            .name-input-group {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .app-header h1 {
+                font-size: 2rem;
+            }
+            .app-header p {
+                font-size: 1rem;
+            }
+            .app-main {
+                padding: 1rem;
+            }
+            .wizard-progress .step-title {
+                font-size: 0.7rem;
+            }
+            .dice-controls {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .dice-popup {
+                width: 300px;
+                right: 10px;
+                bottom: 80px;
+            }
+            .random-buttons-container {
+                flex-direction: column;
+            }
+            .library-container {
+                grid-template-columns: 1fr;
+            }
+            .resources-container {
+                grid-template-columns: 1fr;
+            }
+            .character-detail-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .wizard-progress {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .progress-step {
+                flex-direction: row;
+                width: 100%;
+            }
+            .step-number {
+                margin-bottom: 0;
+                margin-right: 0.5rem;
+            }
+            .app-nav button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            .dice-popup {
+                width: calc(100vw - 20px);
+                right: 10px;
+            }
+            .character-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .character-detail-tabs {
+                flex-direction: column;
+            }
+            .character-detail-tab {
+                border-radius: 5px;
+                margin-bottom: 0.5rem;
+            }
+            .add-equipment-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="app-header">
+            <h1><i class="fas fa-dragon"></i> Мастерская персонажей D&D</h1>
+            <p>Создайте уникального героя для эпических приключений в мире фэнтези</p>
+        </header>
+
+        <!-- Иконка кубика -->
+        <div class="dice-icon" id="dice-icon">
+            <i class="fas fa-dice-d20"></i>
+        </div>
+
+        <!-- Всплывающее окно кубика -->
+        <div class="dice-popup" id="dice-popup">
+            <div class="dice-header">
+                <h3><i class="fas fa-dice"></i> Бросок кубиков</h3>
+                <button class="close-dice" id="close-dice">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="dice-content">
+                <div class="dice-controls">
+                    <button class="dice-btn" data-dice="d4">d4</button>
+                    <button class="dice-btn" data-dice="d6">d6</button>
+                    <button class="dice-btn" data-dice="d8">d8</button>
+                    <button class="dice-btn" data-dice="d10">d10</button>
+                    <button class="dice-btn" data-dice="d12">d12</button>
+                    <button class="dice-btn" data-dice="d20">d20</button>
+                    <button class="dice-btn" data-dice="d100">d100</button>
+                    <button class="dice-btn" data-dice="2d6">2d6</button>
+                </div>
+                <div class="custom-roll">
+                    <input type="text" id="custom-dice" placeholder="Например: 2d6+3">
+                    <button id="roll-custom"><i class="fas fa-play"></i> Бросить</button>
+                </div>
+                <div class="dice-result">
+                    <div class="dice-result-value" id="dice-result">-</div>
+                    <div id="dice-details"></div>
+                </div>
+                <div class="dice-history">
+                    <h4><i class="fas fa-history"></i> История бросков</h4>
+                    <div id="dice-history"></div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="app-nav">
+            <button class="active" data-tab="library"><i class="fas fa-users"></i> Библиотека</button>
+            <button data-tab="creation"><i class="fas fa-user-plus"></i> Создание</button>
+            <button data-tab="resources"><i class="fas fa-heart"></i> Ресурсы</button>
+        </nav>
+
+        <main class="app-main">
+            <!-- Вкладка библиотеки -->
+            <div id="library" class="tab-content active">
+                <h2 style="color: var(--primary); margin-bottom: 1.5rem; font-family: 'Times New Roman', serif;">
+                    <i class="fas fa-users"></i> Библиотека персонажей
+                </h2>
+                <div class="library-container" id="library-container">
+                    <!-- Characters will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Вкладка создания персонажа -->
+            <div id="creation" class="tab-content">
+                <div class="creation-wizard">
+                    <div class="wizard-header">
+                        <h2><i class="fas fa-hat-wizard"></i> Создание персонажа</h2>
+                        <div class="wizard-progress">
+                            <div class="progress-step active" data-step="1">
+                                <div class="step-number">1</div>
+                                <div class="step-title">Базовая информация</div>
+                            </div>
+                            <div class="progress-step" data-step="2">
+                                <div class="step-number">2</div>
+                                <div class="step-title">Раса и класс</div>
+                            </div>
+                            <div class="progress-step" data-step="3">
+                                <div class="step-number">3</div>
+                                <div class="step-title">Характеристики</div>
+                            </div>
+                            <div class="progress-step" data-step="4">
+                                <div class="step-number">4</div>
+                                <div class="step-title">Навыки и умения</div>
+                            </div>
+                            <div class="progress-step" data-step="5">
+                                <div class="step-number">5</div>
+                                <div class="step-title">Оборудование</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wizard-content">
+                        <!-- Шаг 1: Базовая информация -->
+                        <form class="wizard-step active" data-step="1">
+                            <h3><i class="fas fa-id-card"></i> Базовая информация</h3>
+
+                            <div class="random-buttons-container">
+                                <button type="button" class="random-section-btn" id="random-basic-info">
+                                    <i class="fas fa-random"></i> Случайная базовая информация
+                                </button>
+                                <button type="button" class="random-full-btn" id="random-full-character">
+                                    <i class="fas fa-dice-d20"></i> Полностью случайный персонаж
+                                </button>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="char-name"><i class="fas fa-signature"></i> Имя персонажа:</label>
+                                <div class="name-input-group">
+                                    <input type="text" id="char-name" placeholder="Введите имя или сгенерируйте случайное">
+                                    <button type="button" class="random-btn" id="generate-name-btn">
+                                        <i class="fas fa-random"></i> Случайное имя
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gender"><i class="fas fa-venus-mars"></i> Пол персонажа:</label>
+                                <div class="name-input-group">
+                                    <select id="gender">
+                                        <option value="male">Мужской</option>
+                                        <option value="female">Женский</option>
+                                        <option value="nonbinary">Небинарный</option>
+                                    </select>
+                                    <button type="button" class="random-btn" id="random-gender">
+                                        <i class="fas fa-random"></i> Случайно
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="level"><i class="fas fa-chart-line"></i> Уровень персонажа:</label>
+                                <div class="name-input-group">
+                                    <select id="level">
+                                        <option value="1">1 уровень</option>
+                                        <option value="2">2 уровень</option>
+                                        <option value="3">3 уровень</option>
+                                        <option value="4">4 уровень</option>
+                                        <option value="5">5 уровень</option>
+                                        <option value="6">6 уровень</option>
+                                        <option value="7">7 уровень</option>
+                                        <option value="8">8 уровень</option>
+                                        <option value="9">9 уровень</option>
+                                        <option value="10">10 уровень</option>
+                                    </select>
+                                    <button type="button" class="random-btn" id="random-level">
+                                        <i class="fas fa-random"></i> Случайно
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="wizard-actions">
+                                <button type="button" class="back-btn" disabled>
+                                    <i class="fas fa-arrow-left"></i> Назад
+                                </button>
+                                <button type="button" class="next-btn" data-next="2">
+                                    Далее <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Шаг 2: Раса и класс -->
+                        <form class="wizard-step" data-step="2">
+                            <h3><i class="fas fa-people-arrows"></i> Раса и класс</h3>
+
+                            <button type="button" class="random-section-btn" id="random-race-class">
+                                <i class="fas fa-random"></i> Случайные раса и класс
+                            </button>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="race"><i class="fas fa-user-tag"></i> Раса:</label>
+                                    <div class="name-input-group">
+                                        <select id="race">
+                                            <!-- Options will be populated by JavaScript -->
+                                        </select>
+                                        <button type="button" class="random-btn" id="random-race">
+                                            <i class="fas fa-random"></i> Случайно
+                                        </button>
+                                    </div>
+                                    <div id="race-description" class="race-class-info"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="class"><i class="fas fa-user-shield"></i> Класс:</label>
+                                    <div class="name-input-group">
+                                        <select id="class">
+                                            <!-- Options will be populated by JavaScript -->
+                                        </select>
+                                        <button type="button" class="random-btn" id="random-class">
+                                            <i class="fas fa-random"></i> Случайно
+                                        </button>
+                                    </div>
+                                    <div id="class-description" class="race-class-info"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="background"><i class="fas fa-landmark"></i> Предыстория:</label>
+                                <div class="name-input-group">
+                                    <select id="background">
+                                        <option value="acolyte">Аколит</option>
+                                        <option value="charlatan">Шарлатан</option>
+                                        <option value="criminal">Преступник</option>
+                                        <option value="entertainer">Артист</option>
+                                        <option value="folk-hero">Народный герой</option>
+                                        <option value="guild-artisan">Гильдейский ремесленник</option>
+                                        <option value="hermit">Отшельник</option>
+                                        <option value="noble">Благородный</option>
+                                        <option value="outlander">Чужеземец</option>
+                                        <option value="sage">Мудрец</option>
+                                        <option value="sailor">Моряк</option>
+                                        <option value="soldier">Солдат</option>
+                                        <option value="urchin">Бездомный</option>
+                                    </select>
+                                    <button type="button" class="random-btn" id="random-background">
+                                        <i class="fas fa-random"></i> Случайно
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="wizard-actions">
+                                <button type="button" class="back-btn" data-back="1">
+                                    <i class="fas fa-arrow-left"></i> Назад
+                                </button>
+                                <button type="button" class="next-btn" data-next="3">
+                                    Далее <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Шаг 3: Характеристики -->
+                        <form class="wizard-step" data-step="3">
+                            <h3><i class="fas fa-chart-bar"></i> Характеристики</h3>
+
+                            <button type="button" class="random-section-btn" id="random-abilities">
+                                <i class="fas fa-random"></i> Случайные характеристики
+                            </button>
+
+                            <div class="method-selection">
+                                <label><i class="fas fa-cog"></i> Метод создания характеристик:</label>
+                                <div class="method-buttons">
+                                    <button type="button" class="active" data-method="standard">
+                                        <i class="fas fa-dice"></i> Стандартный массив
+                                    </button>
+                                    <button type="button" data-method="pointBuy">
+                                        <i class="fas fa-coins"></i> Покупка очков
+                                    </button>
+                                    <button type="button" data-method="manual">
+                                        <i class="fas fa-edit"></i> Ручной ввод
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="abilities-grid">
+                                <div class="ability-card">
+                                    <div class="ability-name">Сила</div>
+                                    <div class="ability-score" id="str-score">10</div>
+                                    <div class="ability-modifier">+0</div>
+                                </div>
+                                <div class="ability-card">
+                                    <div class="ability-name">Ловкость</div>
+                                    <div class="ability-score" id="dex-score">10</div>
+                                    <div class="ability-modifier">+0</div>
+                                </div>
+                                <div class="ability-card">
+                                    <div class="ability-name">Телосложение</div>
+                                    <div class="ability-score" id="con-score">10</div>
+                                    <div class="ability-modifier">+0</div>
+                                </div>
+                                <div class="ability-card">
+                                    <div class="ability-name">Интеллект</div>
+                                    <div class="ability-score" id="int-score">10</div>
+                                    <div class="ability-modifier">+0</div>
+                                </div>
+                                <div class="ability-card">
+                                    <div class="ability-name">Мудрость</div>
+                                    <div class="ability-score" id="wis-score">10</div>
+                                    <div class="ability-modifier">+0</div>
+                                </div>
+                                <div class="ability-card">
+                                    <div class="ability-name">Харизма</div>
+                                    <div class="ability-score" id="cha-score">10</div>
+                                    <div class="ability-modifier">+0</div>
+                                </div>
+                            </div>
+
+                            <div class="wizard-actions">
+                                <button type="button" class="back-btn" data-back="2">
+                                    <i class="fas fa-arrow-left"></i> Назад
+                                </button>
+                                <button type="button" class="next-btn" data-next="4">
+                                    Далее <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Шаг 4: Навыки и умения -->
+                        <form class="wizard-step" data-step="4">
+                            <h3><i class="fas fa-tasks"></i> Навыки и умения</h3>
+
+                            <button type="button" class="random-section-btn" id="random-skills">
+                                <i class="fas fa-random"></i> Случайные навыки
+                            </button>
+
+                            <div class="skills-info">
+                                <p>Выберите <strong id="available-points">2</strong> навыков для владения</p>
+                                <p class="help-text">
+                                    <i class="fas fa-info-circle"></i> Навыки, в которых вы владеете, получают бонус владения
+                                </p>
+                            </div>
+
+                            <div class="skills-container">
+                                <div class="skills-grid" id="skills-grid">
+                                    <!-- Skills will be generated here -->
+                                </div>
+                                <div class="skill-description" id="skill-description">
+                                    <h4>Описание навыка</h4>
+                                    <p>Нажмите на навык, чтобы увидеть его описание</p>
+                                </div>
+                            </div>
+
+                            <div class="selected-skills">
+                                <h4><i class="fas fa-check-circle"></i> Выбранные навыки:</h4>
+                                <div class="selected-list" id="selected-skills-list"></div>
+                            </div>
+
+                            <div class="wizard-actions">
+                                <button type="button" class="back-btn" data-back="3">
+                                    <i class="fas fa-arrow-left"></i> Назад
+                                </button>
+                                <button type="button" class="next-btn" data-next="5">
+                                    Далее <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Шаг 5: Оборудование -->
+                        <form class="wizard-step" data-step="5">
+                            <h3><i class="fas fa-backpack"></i> Оборудование и снаряжение</h3>
+
+                            <button type="button" class="random-section-btn" id="random-equipment">
+                                <i class="fas fa-random"></i> Случайное оборудование
+                            </button>
+
+                            <div class="equipment-options">
+                                <div class="option-group">
+                                    <h4><i class="fas fa-box-open"></i> Стандартный набор</h4>
+                                    <button type="button" class="btn btn-primary" id="standard-package-btn">
+                                        <i class="fas fa-check"></i> Выбирать стандартный набор
+                                    </button>
+                                </div>
+
+                                <div class="option-group">
+                                    <h4><i class="fas fa-tools"></i> Ручной выбор</h4>
+                                    <div class="equipment-list" id="equipment-list">
+                                        <!-- Equipment items will be generated here -->
+                                    </div>
+                                </div>
+
+                                <div class="option-group">
+                                    <h4><i class="fas fa-coins"></i> Золото</h4>
+                                    <div class="gold-control">
+                                        <button class="btn btn-primary" id="decrease-gold">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" id="gold" min="0" value="0" style="width: 80px; text-align: center;">
+                                        <button class="btn btn-secondary" id="increase-gold">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <span>золотых монет</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="selected-equipment">
+                                <h4><i class="fas fa-clipboard-list"></i> Выбранное снаряжение:</h4>
+                                <div class="equipment-summary" id="equipment-summary"></div>
+                            </div>
+
+                            <div class="wizard-actions">
+                                <button type="button" class="back-btn" data-back="4">
+                                    <i class="fas fa-arrow-left"></i> Назад
+                                </button>
+                                <button type="button" class="next-btn" id="finish-creation">
+                                    <i class="fas fa-check"></i> Завершить создание
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка ресурсов -->
+            <div id="resources" class="tab-content">
+                <!-- Будет заполняться динамически при выборе персонажа -->
+            </div>
+
+            <!-- Детальная страница персонажа (скрыта по умолчанию) -->
+            <div id="character-detail" class="tab-content" style="display: none;">
+                <!-- Будет заполняться динамически -->
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>©2025 Генератор персонажей D&amp;D. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Глобальные переменные
+        let currentCharacter = null;
+        let currentStep = 1;
+        let diceHistory = [];
+        let characters = JSON.parse(localStorage.getItem('dndCharacters')) || [];
+
+        // Базы данных для случайной генерации
+        const nameDatabase = {
+            male: [
+                "Арагорн", "Боромир", "Гендальф", "Леголас", "Гимли", "Фродо", "Сэм", "Перегрин", "Мерри",
+                "Трандуил", "Элронд", "Теоден", "Эомер", "Фарамир", "Денетор", "Голлум", "Саруман", "Саурон"
+            ],
+            female: [
+                "Арвен", "Галадриэль", "Эовин", "Роузи", "Лобэлия", "Иорит", "Морвен", "Ниэна", "Лалайт",
+                "Амариэ", "Идриль", "Лутиэн", "Несса", "Варда", "Яванна", "Нинда", "Уинэн", "Эстэ"
+            ],
+            nonbinary: [
+                "Элэнор", "Келебриан", "Маблунг", "Финдуилас", "Индис", "Анайрэ", "Эарвен", "Нерданэль",
+                "Аредэль", "Исфин", "Эол", "Маэглин", "Келебримбор", "Гил-Галад", "Кирдан", "Орофер"
+            ]
+        };
+
+        // База данных рас с иконками и описаниями
+        const racesDB = {
+            human: {
+                name: "Человек",
+                icon: "fas fa-user",
+                description: "Адаптивные и амбициозные, люди быстро осваиваются в любых условиях и стремятся оставить свой след в мире."
+            },
+            elf: {
+                name: "Эльф",
+                icon: "fas fa-leaf",
+                description: "Грациозные и долгоживущие, эльфы обладают острой интуицией и магическими способностями."
+            },
+            dwarf: {
+                name: "Дварф",
+                icon: "fas fa-mountain",
+                description: "Выносливые и упрямые, дварфы славятся своим мастерством в ремеслах и боевыми навыками."
+            },
+            halfling: {
+                name: "Халфлинг",
+                icon: "fas fa-home",
+                description: "Небольшие и проворные, халфлинги ценят уют и простые радости жизни, но могут проявлять неожиданную храбрость."
+            },
+            gnome: {
+                name: "Гном",
+                icon: "fas fa-hat-wizard",
+                description: "Любопытные и изобретательные, гномы обладают природной склонностью к магии и механике."
+            },
+            "half-elf": {
+                name: "Полуэльф",
+                icon: "fas fa-user-friends",
+                description: "Объединяя лучшие черты людей и эльфов, полуэльфы харизматичны и легко адаптируются."
+            },
+            "half-orc": {
+                name: "Полуорк",
+                icon: "fas fa-fist-raised",
+                description: "Сильные и выносливые, полуорки часто сталкиваются с предрассудками, но доказывают свою ценность в бою."
+            },
+            tiefling: {
+                name: "Тифлинг",
+                icon: "fas fa-fire",
+                description: "Потомки демонов, тифлинги обладают врожденными магическими способностями и вызывают смешанные чувства у окружающих."
+            },
+            dragonborn: {
+                name: "Драконорожденный",
+                icon: "fas fa-dragon",
+                description: "Гордые и могущественные, драконорожденные унаследовали черты драконов и способность к дыхательной атаке."
+            }
+        };
+
+        // База данных классов с иконками и описаниями
+        const classesDB = {
+            barbarian: {
+                name: "Варвар",
+                icon: "fas fa-fist-raised",
+                description: "Воин, черпающий силу из primal rage, неистовый и неукротимый в бою."
+            },
+            bard: {
+                name: "Бард",
+                icon: "fas fa-music",
+                description: "Мастер слов и магии, бард вдохновляет союзников и манипулирует врагами с помощью искусства."
+            },
+            cleric: {
+                name: "Жрец",
+                icon: "fas fa-pray",
+                description: "Посредник между божеством и миром, жрец исцеляет раны и карает неверующих."
+            },
+            druid: {
+                name: "Друид",
+                icon: "fas fa-paw",
+                description: "Хранитель природы, друид черпает силу из мира природы и может принимать формы животных."
+            },
+            fighter: {
+                name: "Воин",
+                icon: "fas fa-shield-alt",
+                description: "Мастер боевых искусств, воин специализируется на владении оружием и тактике сражения."
+            },
+            monk: {
+                name: "Монах",
+                icon: "fas fa-hand-rock",
+                description: "Мастер боевых искусств, монах использует ki energy для сверхчеловеческих подвигов."
+            },
+            paladin: {
+                name: "Паладин",
+                icon: "fas fa-gavel",
+                description: "Святой воин, паладин клянется служить идеалу и бороться со злом с помощью божественной магии."
+            },
+            ranger: {
+                name: "Следопыт",
+                icon: "fas fa-bullseye",
+                description: "Охотник и следопыт, рейнджер специализируется на выживании в дикой природе и борьбе с конкретными врагами."
+            },
+            rogue: {
+                name: "Плут",
+                icon: "fas fa-user-secret",
+                description: "Мастер скрытности и хитрости, плут наносит точные удары и обходит ловушки."
+            },
+            sorcerer: {
+                name: "Чародей",
+                icon: "fas fa-bolt",
+                description: "Заклинатель, чья магия проистекает из врожденных способностей, а не изучения."
+            },
+            warlock: {
+                name: "Колдун",
+                icon: "fas fa-pastafarianism",
+                description: "Обладатель магии, полученной через пакт с могущественным потусторонним существом."
+            },
+            wizard: {
+                name: "Волшебник",
+                icon: "fas fa-hat-wizard",
+                description: "Ученый магии, волшебник изучает заклинания и магические теории для управления силами вселенной."
+            }
+        };
+
+        // База данных навыков с описанием и использованием
+        const allSkills = {
+            "Акробатика": {
+                ability: "dex",
+                description: "Используется для балансирования, выполнения акробатических трюков и уклонения от падения.",
+                usage: "Когда вы пытаетесь пройти по узкому уступу, выполнить сальто или удержать равновесие на качающейся поверхности."
+            },
+            "Анализ": {
+                ability: "int",
+                description: "Помогает находить скрытые детали, анализировать информацию и делать логические выводы.",
+                usage: "При исследовании сложных механизмов, разгадывании головоломок или анализе улик на месте преступления."
+            },
+            "Атлетика": {
+                ability: "str",
+                description: "Применяется для лазания, плавания, прыжков и других физических усилий.",
+                usage: "Когда вы пытаетесь взобраться на крутой склон, перепрыгнуть через пропасть или побороть противника."
+            },
+            "Внимательность": {
+                ability: "wis",
+                description: "Позволяет замечать скрытые детали, слышать тихие звуки и обнаруживать опасности.",
+                usage: "Для обнаружения скрытых врагов, подслушивания разговоров или поиска спрятанных предметов."
+            },
+            "Выживание": {
+                ability: "wis",
+                description: "Используется для отслеживания, ориентирования на местности и выживания в дикой природе.",
+                usage: "Когда вы пытаетесь найти следы, определить съедобные растения или предсказать погоду."
+            },
+            "Выступление": {
+                ability: "cha",
+                description: "Применяется для пения, танцев, игры на инструментах и других видов исполнения.",
+                usage: "Для развлечения толпы, впечатления важной персоны или отвлечения стражи."
+            },
+            "Запугивание": {
+                ability: "cha",
+                description: "Позволяет запугивать других существ с помощью угроз и демонстрации силы.",
+                usage: "Когда вы пытаетесь выведать информацию, заставить кого-то подчиниться или избежать конфликта."
+            },
+            "История": {
+                ability: "int",
+                description: "Знание исторических событий, легенд, древних цивилизаций и королевских линий.",
+                usage: "Для идентификации древних артефактов, понимания культурных обычаев или вспоминания важных исторических фактов."
+            },
+            "Ловкость рук": {
+                ability: "dex",
+                description: "Используется для карманных краж, фокусов и других действий, требующих ловких пальцев.",
+                usage: "Когда вы пытаетесь незаметно что-то стащить, подсунуть предмет или выполнить фокус."
+            },
+            "Магия": {
+                ability: "int",
+                description: "Знание заклинаний, магических традиций, планов существования и магических символов.",
+                usage: "Для идентификации магических эффектов, понимания работы заклинаний или вспоминания информации о магических существах."
+            },
+            "Медицина": {
+                ability: "wis",
+                description: "Помогает диагностировать болезни, оказывать первую помощь и распознавать яды.",
+                usage: "Когда нужно стабилизировать раненого, определить причину болезни или идентифицировать яд."
+            },
+            "Обман": {
+                ability: "cha",
+                description: "Используется для введения в заблуждение, маскировки и убедительной лжи.",
+                usage: "Для создания правдоподобной легенды, скрытия своих намерений или выдачи себя за другого человека."
+            },
+            "Природа": {
+                ability: "int",
+                description: "Знание растений, животных, погодных условий и природных циклов.",
+                usage: "Для идентификации растений и животных, предсказания погоды или нахождения безопасного пути через дикую местность."
+            },
+            "Проницательность": {
+                ability: "wis",
+                description: "Позволяет определять истинные намерения других существ и распознавать обман.",
+                usage: "Когда вы пытаетесь понять, лжет ли someone, каковы истинные мотивы человека или скрывает ли он что-то."
+            },
+            "Расследование": {
+                ability: "int",
+                description: "Используется для поиска улик, дедукции и решения загадок.",
+                usage: "Для поиска скрытых предметов, анализа места преступления или разгадывания сложных загадок."
+            },
+            "Религия": {
+                ability: "int",
+                description: "Знание божеств, религиозных обрядов, молитв и церковных иерархий.",
+                usage: "Для идентификации религиозных символов, понимания ритуалов или вспоминания информации о конкретном божестве."
+            },
+            "Скрытность": {
+                ability: "dex",
+                description: "Позволяет прятаться, двигаться бесшумно и избегать обнаружения.",
+                usage: "Когда вы пытаетесь подкрасться к врагу, спрятаться от преследователей или пройти незамеченным."
+            },
+            "Убеждение": {
+                ability: "cha",
+                description: "Используется для влияния на других с помощью дипломатии и красноречия.",
+                usage: "Для заключения сделки, убеждения кого-то помочь вам или мирного разрешения конфликта."
+            },
+            "Уход за животными": {
+                ability: "wis",
+                description: "Помогает успокаивать животных, ухаживать за ними и тренировать их.",
+                usage: "Для приручения дикого зверя, ухода за раненым животным или определения настроения существа."
+            }
+        };
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Инициализация навигации
+            initializeNavigation();
+
+            // Инициализация кубика
+            initializeDice();
+
+            // Инициализация рас и классов
+            initializeRacesAndClasses();
+
+            // Инициализация навыков
+            initializeSkills();
+
+            // Инициализация оборудования
+            initializeEquipment();
+
+            // Инициализация кнопок случайного выбора
+            initializeRandomButtons();
+
+            // Загрузка сохраненных данных
+            loadSavedData();
+
+            // Загрузка библиотеки персонажей
+            loadLibrary();
+
+            // Загрузка ресурсов
+            loadResources();
+        }
+
+        function initializeRacesAndClasses() {
+            // Заполняем выпадающие списки рас и классов
+            const raceSelect = document.getElementById('race');
+            const classSelect = document.getElementById('class');
+            
+            // Очищаем существующие опции
+            raceSelect.innerHTML = '';
+            classSelect.innerHTML = '';
+            
+            // Добавляем расы
+            Object.keys(racesDB).forEach(raceKey => {
+                const option = document.createElement('option');
+                option.value = raceKey;
+                option.textContent = racesDB[raceKey].name;
+                raceSelect.appendChild(option);
+            });
+            
+            // Добавляем классы
+            Object.keys(classesDB).forEach(classKey => {
+                const option = document.createElement('option');
+                option.value = classKey;
+                option.textContent = classesDB[classKey].name;
+                classSelect.appendChild(option);
+            });
+            
+            // Добавляем обработчики для отображения описаний
+            raceSelect.addEventListener('change', function() {
+                const raceKey = this.value;
+                const race = racesDB[raceKey];
+                document.getElementById('race-description').innerHTML = `
+                    <div class="race-class-tooltip" data-tooltip="${race.description}">
+                        <span class="race-class-icon"><i class="${race.icon}"></i></span>
+                        <span>${race.description}</span>
+                    </div>
+                `;
+            });
+            
+            classSelect.addEventListener('change', function() {
+                const classKey = this.value;
+                const classData = classesDB[classKey];
+                document.getElementById('class-description').innerHTML = `
+                    <div class="race-class-tooltip" data-tooltip="${classData.description}">
+                        <span class="race-class-icon"><i class="${classData.icon}"></i></span>
+                        <span>${classData.description}</span>
+                    </div>
+                `;
+            });
+            
+            // Инициализируем описания для выбранных по умолчанию значений
+            raceSelect.dispatchEvent(new Event('change'));
+            classSelect.dispatchEvent(new Event('change'));
+        }
+
+        function initializeRandomButtons() {
+            // Кнопка полного случайного персонажа
+            document.getElementById('random-full-character').addEventListener('click', generateFullRandomCharacter);
+
+            // Кнопки для отдельных секций
+            document.getElementById('random-basic-info').addEventListener('click', generateRandomBasicInfo);
+            document.getElementById('random-race-class').addEventListener('click', generateRandomRaceAndClass);
+            document.getElementById('random-abilities').addEventListener('click', generateRandomAbilities);
+            document.getElementById('random-skills').addEventListener('click', generateRandomSkills);
+            document.getElementById('random-equipment').addEventListener('click', generateRandomEquipment);
+
+            // Кнопки для отдельных полей
+            document.getElementById('generate-name-btn').addEventListener('click', generateRandomName);
+            document.getElementById('random-gender').addEventListener('click', generateRandomGender);
+            document.getElementById('random-level').addEventListener('click', generateRandomLevel);
+            document.getElementById('random-race').addEventListener('click', generateRandomRace);
+            document.getElementById('random-class').addEventListener('click', generateRandomClass);
+            document.getElementById('random-background').addEventListener('click', generateRandomBackground);
+            
+            // Кнопки для управления золотом
+            document.getElementById('increase-gold').addEventListener('click', function() {
+                const goldInput = document.getElementById('gold');
+                goldInput.value = parseInt(goldInput.value) + 10;
+                updateEquipmentSummary();
+            });
+            
+            document.getElementById('decrease-gold').addEventListener('click', function() {
+                const goldInput = document.getElementById('gold');
+                const newValue = Math.max(0, parseInt(goldInput.value) - 10);
+                goldInput.value = newValue;
+                updateEquipmentSummary();
+            });
+        }
+
+        function generateFullRandomCharacter() {
+            generateRandomBasicInfo();
+            generateRandomRaceAndClass();
+            generateRandomAbilities();
+            generateRandomSkills();
+            generateRandomEquipment();
+
+            // Анимация для визуального эффекта
+            const wizardContent = document.querySelector('.wizard-content');
+            wizardContent.style.animation = 'none';
+            setTimeout(() => {
+                wizardContent.style.animation = 'fadeIn 0.5s ease';
+            }, 10);
+
+            // Показать уведомление
+            showNotification('Персонаж полностью сгенерирован!', 'success');
+        }
+
+        function generateRandomBasicInfo() {
+            generateRandomName();
+            generateRandomGender();
+            generateRandomLevel();
+        }
+
+        function generateRandomName() {
+            const gender = document.getElementById('gender').value;
+            const names = nameDatabase[gender];
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            document.getElementById('char-name').value = randomName;
+        }
+
+        function generateRandomGender() {
+            const genders = ['male', 'female', 'nonbinary'];
+            const randomGender = genders[Math.floor(Math.random() * genders.length)];
+            document.getElementById('gender').value = randomGender;
+
+            // Обновляем имя в соответствии с полом
+            generateRandomName();
+        }
+
+        function generateRandomLevel() {
+            const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+            document.getElementById('level').value = randomLevel;
+        }
+
+        function generateRandomRaceAndClass() {
+            generateRandomRace();
+            generateRandomClass();
+            generateRandomBackground();
+        }
+
+        function generateRandomRace() {
+            const races = Object.keys(racesDB);
+            const randomRace = races[Math.floor(Math.random() * races.length)];
+            document.getElementById('race').value = randomRace;
+            document.getElementById('race').dispatchEvent(new Event('change'));
+        }
+
+        function generateRandomClass() {
+            const classes = Object.keys(classesDB);
+            const randomClass = classes[Math.floor(Math.random() * classes.length)];
+            document.getElementById('class').value = randomClass;
+            document.getElementById('class').dispatchEvent(new Event('change'));
+        }
+
+        function generateRandomBackground() {
+            const backgrounds = [
+                'acolyte', 'charlatan', 'criminal', 'entertainer', 'folk-hero',
+                'guild-artisan', 'hermit', 'noble', 'outlander', 'sage',
+                'sailor', 'soldier', 'urchin'
+            ];
+            const randomBackground = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+            document.getElementById('background').value = randomBackground;
+        }
+
+        function generateRandomAbilities() {
+            // Генерируем стандартный массив значений характеристик
+            const standardArray = [15, 14, 13, 12, 10, 8];
+
+            // Перемешиваем массив
+            for (let i = standardArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [standardArray[i], standardArray[j]] = [standardArray[j], standardArray[i]];
+            }
+
+            // Применяем значения к характеристикам
+            document.getElementById('str-score').textContent = standardArray[0];
+            document.getElementById('dex-score').textContent = standardArray[1];
+            document.getElementById('con-score').textContent = standardArray[2];
+            document.getElementById('int-score').textContent = standardArray[3];
+            document.getElementById('wis-score').textContent = standardArray[4];
+            document.getElementById('cha-score').textContent = standardArray[5];
+
+            // Обновляем модификаторы
+            updateAbilityModifiers();
+        }
+
+        function updateAbilityModifiers() {
+            const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+            abilities.forEach(ability => {
+                const score = parseInt(document.getElementById(`${ability}-score`).textContent);
+                const modifier = Math.floor((score - 10) / 2);
+                const modifierElement = document.querySelector(`#${ability}-score`).parentElement.querySelector('.ability-modifier');
+                modifierElement.textContent = modifier >= 0 ? `+${modifier}` : `${modifier}`;
+            });
+        }
+
+        function generateRandomSkills() {
+            // Сбрасываем все выбранные навыки
+            document.querySelectorAll('#skills-grid input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.closest('.skill-item').classList.remove('selected');
+            });
+
+            // Получаем доступное количество навыков
+            const availablePoints = 5;
+
+            // Получаем список всех навыков
+            const allSkills = document.querySelectorAll('#skills-grid .skill-item');
+
+            // Выбираем случайные навыки
+            for (let i = 0; i < availablePoints; i++) {
+                let randomIndex;
+                let selectedSkill;
+
+                // Убеждаемся, что не выбираем уже выбранный навык
+                do {
+                    randomIndex = Math.floor(Math.random() * allSkills.length);
+                    selectedSkill = allSkills[randomIndex];
+                } while (selectedSkill.classList.contains('selected') || selectedSkill.classList.contains('disabled'));
+
+                // Выбираем навык
+                const checkbox = selectedSkill.querySelector('input[type="checkbox"]');
+                checkbox.checked = true;
+                selectedSkill.classList.add('selected');
+            }
+
+            // Обновляем список выбранных навыков
+            updateSelectedSkills();
+        }
+
+        function generateRandomEquipment() {
+            // Сбрасываем все выбранное оборудование
+            document.querySelectorAll('.equipment-item-select').forEach(item => {
+                item.classList.remove('selected');
+                item.querySelector('input').checked = false;
+            });
+
+            // Выбираем случайное оборудование
+            const allEquipment = document.querySelectorAll('.equipment-item-select');
+            const equipmentCount = Math.floor(Math.random() * 6) + 3; // От 3 до 8 предметов
+
+            for (let i = 0; i < equipmentCount; i++) {
+                let randomIndex;
+                let selectedEquipment;
+
+                // Убеждаемся, что не выбираем уже выбранный предмет
+                do {
+                    randomIndex = Math.floor(Math.random() * allEquipment.length);
+                    selectedEquipment = allEquipment[randomIndex];
+                } while (selectedEquipment.classList.contains('selected'));
+
+                // Выбираем предмет
+                selectedEquipment.classList.add('selected');
+                selectedEquipment.querySelector('input').checked = true;
+            }
+
+            // Устанавливаем случайное количество золота
+            const randomGold = Math.floor(Math.random() * 100) + 10; // От 10 до 109 золота
+            document.getElementById('gold').value = randomGold;
+
+            // Обновляем сводку оборудования
+            updateEquipmentSummary();
+        }
+
+        function showNotification(message, type = 'info') {
+            // Создаем элемент уведомления
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            // Добавляем стили для уведомления
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success)' : 'var(--secondary)'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: var(--border-radius);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideInRight 0.3s ease;
+                max-width: 300px;
+                border: 1px solid var(--accent);
+                font-family: 'Times New Roman', serif;
+            `;
+
+            // Добавляем в тело документа
+            document.body.appendChild(notification);
+
+            // Удаляем через 3 секунды
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+
+            // Добавляем CSS анимации
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideInRight {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOutRight {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        function initializeNavigation() {
+            // Обработчики для навигационных кнопок
+            const navButtons = document.querySelectorAll('.app-nav button');
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Обработчики для кнопок навигации в мастере
+            document.querySelectorAll('.next-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const nextStep = this.getAttribute('data-next');
+                    if (nextStep) {
+                        goToStep(parseInt(nextStep));
+                    } else if (this.id === 'finish-creation') {
+                        finishCharacterCreation();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.back-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const backStep = this.getAttribute('data-back');
+                    if (backStep) {
+                        goToStep(parseInt(backStep));
+                    }
+                });
+            });
+        }
+
+        function switchTab(tabId) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            // Убрать активный класс со всех кнопок
+            document.querySelectorAll('.app-nav button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Показать выбранную вкладку
+            document.getElementById(tabId).style.display = 'block';
+
+            // Активировать соответствующую кнопку
+            document.querySelector(`.app-nav button[data-tab="${tabId}"]`).classList.add('active');
+        }
+
+        function goToStep(step) {
+            // Скрыть текущий шаг
+            document.querySelector(`.wizard-step[data-step="${currentStep}"]`).classList.remove('active');
+
+            // Показать новый шаг
+            document.querySelector(`.wizard-step[data-step="${step}"]`).classList.add('active');
+
+            // Обновить прогресс
+            document.querySelectorAll('.progress-step').forEach(progressStep => {
+                const stepNum = parseInt(progressStep.getAttribute('data-step'));
+                if (stepNum === step) {
+                    progressStep.classList.add('active');
+                } else {
+                    progressStep.classList.remove('active');
+                }
+            });
+
+            // Обновить кнопки назад
+            document.querySelectorAll('.back-btn').forEach(button => {
+                if (step === 1) {
+                    button.disabled = true;
+                } else {
+                    button.disabled = false;
+                }
+            });
+
+            // Обновить текущий шаг
+            currentStep = step;
+        }
+
+        function initializeDice() {
+            // Обработчики для открытия/закрытия кубика
+            document.getElementById('dice-icon').addEventListener('click', function() {
+                document.getElementById('dice-popup').classList.add('show');
+            });
+
+            document.getElementById('close-dice').addEventListener('click', function() {
+                document.getElementById('dice-popup').classList.remove('show');
+            });
+
+            // Обработчики для кнопок кубиков
+            document.querySelectorAll('.dice-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const dice = this.getAttribute('data-dice');
+                    rollDice(dice);
+                });
+            });
+
+            // Обработчик для кастомного броска
+            document.getElementById('roll-custom').addEventListener('click', function() {
+                const customDice = document.getElementById('custom-dice').value;
+                if (customDice) {
+                    rollDice(customDice);
+                }
+            });
+
+            // Обработчик для Enter в поле кастомного броска
+            document.getElementById('custom-dice').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('roll-custom').click();
+                }
+            });
+
+            // Закрытие кубика при клике вне его области
+            document.addEventListener('click', function(e) {
+                const dicePopup = document.getElementById('dice-popup');
+                const diceIcon = document.getElementById('dice-icon');
+
+                if (!dicePopup.contains(e.target) && !diceIcon.contains(e.target)) {
+                    dicePopup.classList.remove('show');
+                }
+            });
+        }
+
+        function rollDice(diceFormula) {
+            // Парсим формулу кубика
+            const result = parseDiceFormula(diceFormula);
+            if (!result) {
+                alert('Неверная формула кубика! Используйте формат: XdY+Z или dY+Z');
+                return;
+            }
+
+            // Бросаем кубики
+            let total = 0;
+            const rolls = [];
+
+            for (let i = 0; i < result.count; i++) {
+                const roll = Math.floor(Math.random() * result.sides) + 1;
+                rolls.push(roll);
+                total += roll;
+            }
+
+            total += result.modifier;
+
+            // Определяем критические броски
+            let isCritical = false;
+            let isFail = false;
+
+            if (result.sides === 20) {
+                if (rolls.includes(20)) {
+                    isCritical = true;
+                } else if (rolls.includes(1)) {
+                    isFail = true;
+                }
+            }
+
+            // Показываем анимацию кубика
+            showDiceAnimation(diceFormula, total, rolls, result.sides);
+
+            // Отображаем результат
+            displayDiceResult(diceFormula, total, rolls, result.modifier, isCritical, isFail);
+
+            // Добавляем в историю
+            addToDiceHistory(diceFormula, total, rolls, result.modifier, isCritical, isFail);
+        }
+
+        function showDiceAnimation(diceFormula, total, rolls, sides) {
+            // Создаем контейнер для анимации
+            const animationContainer = document.createElement('div');
+            animationContainer.className = 'dice-animation-container';
+            
+            // Для d6 показываем 3D кубик, для остальных - просто число
+            if (sides === 6) {
+                // Создаем 3D кубик
+                const dice3d = document.createElement('div');
+                dice3d.className = 'dice-3d';
+                
+                // Создаем грани кубика
+                for (let i = 1; i <= 6; i++) {
+                    const face = document.createElement('div');
+                    face.className = `dice-face dice-face-${i}`;
+                    face.textContent = i;
+                    dice3d.appendChild(face);
+                }
+                
+                animationContainer.appendChild(dice3d);
+                
+                // Анимируем кубик
+                setTimeout(() => {
+                    // Случайные вращения
+                    const randomX = Math.floor(Math.random() * 5) * 90;
+                    const randomY = Math.floor(Math.random() * 5) * 90;
+                    const randomZ = Math.floor(Math.random() * 5) * 90;
+                    
+                    dice3d.style.transform = `rotateX(${randomX}deg) rotateY(${randomY}deg) rotateZ(${randomZ}deg)`;
+                }, 10);
+                
+                // Через 1 секунду показываем результат
+                setTimeout(() => {
+                    // Поворачиваем кубик так, чтобы выпавшая грань была сверху
+                    const resultFace = rolls[0];
+                    let transform = '';
+                    
+                    switch(resultFace) {
+                        case 1: transform = 'rotateX(0deg) rotateY(0deg)'; break;
+                        case 2: transform = 'rotateY(-90deg)'; break;
+                        case 3: transform = 'rotateX(-90deg)'; break;
+                        case 4: transform = 'rotateX(90deg)'; break;
+                        case 5: transform = 'rotateY(90deg)'; break;
+                        case 6: transform = 'rotateX(180deg)'; break;
+                    }
+                    
+                    dice3d.style.transform = transform;
+                }, 1000);
+            } else {
+                // Для других кубиков показываем просто число с анимацией
+                const numberDisplay = document.createElement('div');
+                numberDisplay.className = 'dice-result-overlay';
+                numberDisplay.innerHTML = `
+                    <div class="dice-result-text">Бросок ${diceFormula}</div>
+                    <div class="dice-result-number">${total}</div>
+                    <button class="btn btn-primary" onclick="this.parentElement.parentElement.remove()">Закрыть</button>
+                `;
+                
+                animationContainer.appendChild(numberDisplay);
+            }
+            
+            document.body.appendChild(animationContainer);
+            
+            // Удаляем анимацию через 3 секунды
+            setTimeout(() => {
+                if (animationContainer.parentNode) {
+                    animationContainer.parentNode.removeChild(animationContainer);
+                }
+            }, 3000);
+        }
+
+        function parseDiceFormula(formula) {
+            // Регулярное выражение для парсинга формул типа: XdY+Z, dY+Z, XdY-Z
+            const match = formula.match(/^(\d+)d(\d+)([+-]\d+)?$|^d(\d+)([+-]\d+)?$/i);
+
+            if (!match) return null;
+
+            let count, sides, modifier;
+
+            if (match[1]) {
+                // Формат: XdY+Z
+                count = parseInt(match[1]);
+                sides = parseInt(match[2]);
+                modifier = match[3] ? parseInt(match[3]) : 0;
+            } else {
+                // Формат: dY+Z
+                count = 1;
+                sides = parseInt(match[4]);
+                modifier = match[5] ? parseInt(match[5]) : 0;
+            }
+
+            return {
+                count,
+                sides,
+                modifier
+            };
+        }
+
+        function displayDiceResult(formula, total, rolls, modifier, isCritical, isFail) {
+            const resultElement = document.getElementById('dice-result');
+            const detailsElement = document.getElementById('dice-details');
+
+            // Анимация броска
+            resultElement.classList.add('dice-animation');
+
+            // Очищаем предыдущие классы
+            resultElement.classList.remove('critical-hit', 'critical-fail');
+
+            setTimeout(() => {
+                resultElement.textContent = total;
+                resultElement.classList.remove('dice-animation');
+
+                // Добавляем классы для критических бросков
+                if (isCritical) {
+                    resultElement.classList.add('critical-hit');
+                } else if (isFail) {
+                    resultElement.classList.add('critical-fail');
+                }
+
+                // Показываем детали броска
+                let details = `Бросок: ${formula}<br>`;
+                details += `Результаты: ${rolls.join(', ')}`;
+
+                if (modifier !== 0) {
+                    details += ` Модификатор: ${modifier > 0 ? '+' : ''}${modifier}`;
+                }
+
+                if (isCritical) {
+                    details += '<br><strong>КРИТИЧЕСКИЙ УСПЕХ!</strong>';
+                } else if (isFail) {
+                    details += '<br><strong>КРИТИЧЕСКИЙ ПРОВАЛ!</strong>';
+                }
+
+                detailsElement.innerHTML = details;
+            }, 500);
+        }
+
+        function addToDiceHistory(formula, total, rolls, modifier, isCritical, isFail) {
+            const historyElement = document.getElementById('dice-history');
+
+            // Создаем элемент истории
+            const historyItem = document.createElement('div');
+            historyItem.className = 'dice-history-item';
+
+            let historyText = `${formula} = ${total}`;
+            if (rolls.length > 1) {
+                historyText += ` (${rolls.join('+')}`;
+                if (modifier !== 0) {
+                    historyText += `${modifier > 0 ? '+' : ''}${modifier}`;
+                }
+                historyText += ')';
+            }
+
+            if (isCritical) {
+                historyText += ' 🎯';
+            } else if (isFail) {
+                historyText += ' 💥';
+            }
+
+            historyItem.textContent = historyText;
+
+            // Добавляем в начало истории
+            historyElement.insertBefore(historyItem, historyElement.firstChild);
+
+            // Ограничиваем историю 10 последними бросками
+            if (historyElement.children.length > 10) {
+                historyElement.removeChild(historyElement.lastChild);
+            }
+
+            // Сохраняем в локальное хранилище
+            diceHistory.unshift({
+                formula,
+                total,
+                rolls,
+                modifier,
+                isCritical,
+                isFail,
+                timestamp: new Date().toISOString()
+            });
+
+            // Сохраняем только последние 20 бросков
+            if (diceHistory.length > 20) {
+                diceHistory = diceHistory.slice(0, 20);
+            }
+
+            localStorage.setItem('dndDiceHistory', JSON.stringify(diceHistory));
+        }
+
+        function initializeSkills() {
+            // Генерация списка навыков
+            generateSkillsList();
+
+            // Обработчик для золота
+            document.getElementById('gold').addEventListener('input', updateEquipmentSummary);
+        }
+
+        function generateSkillsList() {
+            const skillsGrid = document.getElementById('skills-grid');
+            skillsGrid.innerHTML = '';
+
+            Object.keys(allSkills).forEach(skillName => {
+                const skillItem = document.createElement('div');
+                skillItem.className = 'skill-item';
+                skillItem.innerHTML = `
+                    <div class="skill-checkbox">
+                        <input type="checkbox" id="skill-${skillName}">
+                    </div>
+                    <div class="skill-info">
+                        <div class="skill-name">${skillName}</div>
+                        <div class="skill-ability">(${getAbilityShortName(allSkills[skillName].ability)})</div>
+                    </div>
+                    <div class="skill-bonus" id="bonus-${skillName}">+0</div>
+                `;
+                skillsGrid.appendChild(skillItem);
+
+                // Обработчик для выбора навыка (клик на весь блок)
+                skillItem.addEventListener('click', function(e) {
+                    // Если клик не на чекбоксе, то переключаем чекбокс
+                    if (e.target.type !== 'checkbox') {
+                        const checkbox = this.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+
+                        // Обновляем визуальное состояние
+                        if (checkbox.checked) {
+                            this.classList.add('selected');
+                        } else {
+                            this.classList.remove('selected');
+                        }
+
+                        updateSelectedSkills();
+                    }
+                });
+
+                // Обработчик для показа описания при наведении
+                skillItem.addEventListener('mouseenter', function() {
+                    const skillData = allSkills[skillName];
+                    document.getElementById('skill-description').innerHTML = `
+                        <h4>${skillName}</h4>
+                        <p><strong>Характеристика:</strong> ${getAbilityFullName(skillData.ability)}</p>
+                        <p><strong>Описание:</strong> ${skillData.description}</p>
+                        <div class="skill-usage">
+                            <p><strong>Использование:</strong> ${skillData.usage}</p>
+                        </div>
+                    `;
+                });
+
+                // Обработчик для чекбокса
+                document.getElementById(`skill-${skillName}`).addEventListener('change', function() {
+                    const skillItem = this.closest('.skill-item');
+                    if (this.checked) {
+                        skillItem.classList.add('selected');
+                    } else {
+                        skillItem.classList.remove('selected');
+                    }
+                    updateSelectedSkills();
+                });
+            });
+
+            // Обновить модификаторы навыков
+            updateSkillModifiers();
+        }
+
+        function getAbilityShortName(ability) {
+            const names = {
+                str: 'СИЛ',
+                dex: 'ЛВК',
+                con: 'ТЕЛ',
+                int: 'ИНТ',
+                wis: 'МДР',
+                cha: 'ХАР'
+            };
+            return names[ability] || ability;
+        }
+
+        function getAbilityFullName(ability) {
+            const names = {
+                str: 'Сила',
+                dex: 'Ловкость',
+                con: 'Телосложение',
+                int: 'Интеллект',
+                wis: 'Мудрость',
+                cha: 'Харизма'
+            };
+            return names[ability] || ability;
+        }
+
+        function updateSkillModifiers() {
+            const allSkillsList = Object.keys(allSkills);
+
+            allSkillsList.forEach(skillName => {
+                const ability = allSkills[skillName].ability;
+                // Для демонстрации установим случайные значения
+                const abilityScore = Math.floor(Math.random() * 10) + 8;
+                const modifier = Math.floor((abilityScore - 10) / 2);
+                const isProficient = document.getElementById(`skill-${skillName}`).checked;
+                const totalBonus = isProficient ? modifier + 2 : modifier;
+
+                document.getElementById(`bonus-${skillName}`).textContent = totalBonus >= 0 ? `+${totalBonus}` : `${totalBonus}`;
+            });
+        }
+
+        function updateSelectedSkills() {
+            const selectedList = document.getElementById('selected-skills-list');
+            selectedList.innerHTML = '';
+
+            const allSkillsList = Object.keys(allSkills);
+
+            let selectedCount = 0;
+
+            allSkillsList.forEach(skillName => {
+                if (document.getElementById(`skill-${skillName}`).checked) {
+                    const tag = document.createElement('span');
+                    tag.className = 'selected-tag';
+                    tag.innerHTML = `<i class="fas fa-check"></i> ${skillName}`;
+                    selectedList.appendChild(tag);
+                    selectedCount++;
+                }
+            });
+
+            // Обновить количество доступных очков
+            const availablePoints = 5 - selectedCount;
+            document.getElementById('available-points').textContent = availablePoints;
+
+            // Обновить состояние чекбоксов
+            allSkillsList.forEach(skillName => {
+                const checkbox = document.getElementById(`skill-${skillName}`);
+                if (availablePoints <= 0 && !checkbox.checked) {
+                    checkbox.disabled = true;
+                    checkbox.closest('.skill-item').classList.add('disabled');
+                } else {
+                    checkbox.disabled = false;
+                    checkbox.closest('.skill-item').classList.remove('disabled');
+                }
+            });
+
+            // Обновить модификаторы навыков
+            updateSkillModifiers();
+        }
+
+        function initializeEquipment() {
+            // Генерация списка оборудования
+            generateEquipmentList();
+
+            // Обработчик для выбора стандартного набора
+            document.getElementById('standard-package-btn').addEventListener('click', function() {
+                selectStandardPackage();
+            });
+
+            // Обработчик для выбора предметов
+            document.querySelectorAll('.equipment-item-select').forEach(item => {
+                item.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    updateEquipmentSummary();
+                });
+            });
+        }
+
+        function generateEquipmentList() {
+            const equipmentList = document.getElementById('equipment-list');
+            equipmentList.innerHTML = '';
+
+            const equipmentCategories = {
+                "Оружие": [
+                    "Короткий меч",
+                    "Длинный лук",
+                    "Боевой топор",
+                    "Кинжал",
+                    "Посох",
+                    "Булава"
+                ],
+                "Броня": [
+                    "Кожаный доспех",
+                    "Кольчужная рубаха",
+                    "Кожаные наплечники",
+                    "Щит"
+                ],
+                "Снаряжение": [
+                    "Походный рюкзак",
+                    "Веревка (50 футов)",
+                    "Факелы (5)",
+                    "Набор для кемпинга",
+                    "Набор путешественника",
+                    "Набор для взлома"
+                ],
+                "Инструменты": [
+                    "Набор для ремонта",
+                    "Музыкальный инструмент",
+                    "Набор алхимика",
+                    "Набор травника"
+                ]
+            };
+
+            Object.keys(equipmentCategories).forEach(category => {
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'equipment-category';
+                categoryElement.innerHTML = `<h4>${category}</h4>`;
+
+                equipmentCategories[category].forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'equipment-item-select';
+                    itemElement.innerHTML = `
+                        <input type="checkbox" id="equip-${item.replace(/\s+/g, '-')}">
+                        <label for="equip-${item.replace(/\s+/g, '-')}">${item}</label>
+                    `;
+                    categoryElement.appendChild(itemElement);
+
+                    // Обработчик для чекбокса
+                    itemElement.querySelector('input').addEventListener('change', function() {
+                        if (this.checked) {
+                            itemElement.classList.add('selected');
+                        } else {
+                            itemElement.classList.remove('selected');
+                        }
+                        updateEquipmentSummary();
+                    });
+                });
+
+                equipmentList.appendChild(categoryElement);
+            });
+        }
+
+        function selectStandardPackage() {
+            // Сброс всех выборов
+            document.querySelectorAll('.equipment-item-select').forEach(item => {
+                item.classList.remove('selected');
+                item.querySelector('input').checked = false;
+            });
+
+            // Выбор стандартного набора для воина
+            const standardItems = [
+                "Кожаный доспех",
+                "Щит",
+                "Боевой топор",
+                "Кинжал",
+                "Походный рюкзак",
+                "Веревка (50 футов)",
+                "Факелы (5)",
+                "Набор для кемпинга"
+            ];
+
+            standardItems.forEach(item => {
+                const itemElement = document.querySelector(`#equip-${item.replace(/\s+/g, '-')}`);
+                if (itemElement) {
+                    itemElement.classList.add('selected');
+                    itemElement.querySelector('input').checked = true;
+                }
+            });
+
+            // Установка золота
+            document.getElementById('gold').value = 50;
+
+            updateEquipmentSummary();
+        }
+
+        function updateEquipmentSummary() {
+            const summaryElement = document.getElementById('equipment-summary');
+            summaryElement.innerHTML = '';
+
+            const selectedItems = [];
+            document.querySelectorAll('.equipment-item-select.selected').forEach(item => {
+                const label = item.querySelector('label').textContent;
+                selectedItems.push(label);
+            });
+
+            if (selectedItems.length === 0) {
+                summaryElement.innerHTML = '<p>Снаряжение не выбрано</p>';
+                return;
+            }
+
+            selectedItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'equipment-summary-item';
+                itemElement.innerHTML = `<i class="fas fa-check"></i> ${item}`;
+                summaryElement.appendChild(itemElement);
+            });
+
+            // Добавляем золото
+            const goldValue = document.getElementById('gold').value;
+            if (goldValue > 0) {
+                const goldElement = document.createElement('div');
+                goldElement.className = 'equipment-summary-item';
+                goldElement.innerHTML = `<i class="fas fa-coins"></i> Золото: ${goldValue}`;
+                summaryElement.appendChild(goldElement);
+            }
+        }
+
+        function finishCharacterCreation() {
+            // Собираем данные о персонаже
+            const character = {
+                id: Date.now().toString(),
+                name: document.getElementById('char-name').value,
+                gender: document.getElementById('gender').value,
+                level: parseInt(document.getElementById('level').value),
+                race: document.getElementById('race').value,
+                class: document.getElementById('class').value,
+                background: document.getElementById('background').value,
+                abilities: {
+                    str: parseInt(document.getElementById('str-score').textContent),
+                    dex: parseInt(document.getElementById('dex-score').textContent),
+                    con: parseInt(document.getElementById('con-score').textContent),
+                    int: parseInt(document.getElementById('int-score').textContent),
+                    wis: parseInt(document.getElementById('wis-score').textContent),
+                    cha: parseInt(document.getElementById('cha-score').textContent)
+                },
+                skills: getSelectedSkills(),
+                equipment: getSelectedEquipment(),
+                gold: parseInt(document.getElementById('gold').value),
+                resources: {
+                    currentHP: calculateMaxHP({
+                        level: parseInt(document.getElementById('level').value),
+                        abilities: {
+                            con: parseInt(document.getElementById('con-score').textContent)
+                        }
+                    }),
+                    currentMana: 50,
+                    currentLuck: 3,
+                    currentInspiration: 1
+                },
+                createdAt: new Date().toISOString()
+            };
+
+            // Добавляем персонажа в библиотеку
+            characters.push(character);
+            localStorage.setItem('dndCharacters', JSON.stringify(characters));
+
+            showNotification('Персонаж успешно создан!', 'success');
+
+            // Переходим на вкладку библиотеки
+            switchTab('library');
+
+            // Обновляем библиотеку
+            loadLibrary();
+        }
+
+        function getSelectedSkills() {
+            const selectedSkills = [];
+            document.querySelectorAll('#skills-grid input[type="checkbox"]:checked').forEach(checkbox => {
+                const skillName = checkbox.id.replace('skill-', '');
+                const skillData = allSkills[skillName];
+                selectedSkills.push({
+                    name: skillName,
+                    description: skillData.description,
+                    usage: skillData.usage
+                });
+            });
+            return selectedSkills;
+        }
+
+        function getSelectedEquipment() {
+            const selectedEquipment = [];
+            document.querySelectorAll('.equipment-item-select.selected').forEach(item => {
+                const label = item.querySelector('label').textContent;
+                selectedEquipment.push(label);
+            });
+            return selectedEquipment;
+        }
+
+        function loadLibrary() {
+            const libraryContainer = document.getElementById('library-container');
+            libraryContainer.innerHTML = '';
+
+            if (characters.length === 0) {
+                libraryContainer.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text);">
+                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h3>Библиотека персонажей пуста</h3>
+                        <p>Создайте своего первого персонажа на вкладке "Создание"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            characters.forEach(character => {
+                const maxHP = calculateMaxHP(character);
+                const currentHP = character.resources?.currentHP || maxHP;
+
+                const characterCard = document.createElement('div');
+                characterCard.className = 'library-character-card';
+                characterCard.innerHTML = `
+                    <div class="character-header">
+                        <div class="character-avatar">
+                            <i class="${classesDB[character.class]?.icon || 'fas fa-user'}"></i>
+                        </div>
+                        <div class="character-basic-info">
+                            <h3>${character.name}</h3>
+                            <p>
+                                <span class="race-class-tooltip" data-tooltip="${racesDB[character.race]?.description || ''}">
+                                    <i class="${racesDB[character.race]?.icon || 'fas fa-user'}"></i> ${getRaceName(character.race)}
+                                </span>, 
+                                <span class="race-class-tooltip" data-tooltip="${classesDB[character.class]?.description || ''}">
+                                    <i class="${classesDB[character.class]?.icon || 'fas fa-user'}"></i> ${getClassName(character.class)}
+                                </span> ${character.level} уровня
+                            </p>
+                            <p>${getBackgroundName(character.background)}</p>
+                            <p>Здоровье: ${currentHP}/${maxHP}</p>
+                        </div>
+                    </div>
+                    <div class="character-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${character.abilities.str}</div>
+                            <div class="stat-label">Сила</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${character.abilities.dex}</div>
+                            <div class="stat-label">Ловкость</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${character.abilities.con}</div>
+                            <div class="stat-label">Тело</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${character.abilities.int}</div>
+                            <div class="stat-label">Интеллект</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${character.abilities.wis}</div>
+                            <div class="stat-label">Мудрость</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${character.abilities.cha}</div>
+                            <div class="stat-label">Харизма</div>
+                        </div>
+                    </div>
+                    <div class="character-actions">
+                        <button class="btn btn-primary" onclick="viewCharacter('${character.id}')">
+                            <i class="fas fa-eye"></i> Просмотр
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadCharacterResources('${character.id}')">
+                            <i class="fas fa-heart"></i> Ресурсы
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteCharacter('${character.id}')">
+                            <i class="fas fa-trash"></i> Удалить
+                        </button>
+                    </div>
+                `;
+                libraryContainer.appendChild(characterCard);
+            });
+        }
+
+        function viewCharacter(characterId) {
+            const character = characters.find(c => c.id === characterId);
+            if (!character) return;
+
+            // Скрываем все вкладки и показываем детальную
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            document.getElementById('character-detail').style.display = 'block';
+
+            // Заполняем детальную страницу
+            const detailContainer = document.getElementById('character-detail');
+            detailContainer.innerHTML = `
+                <a href="javascript:void(0)" class="back-to-library" onclick="switchTab('library')">
+                    <i class="fas fa-arrow-left"></i> Назад к библиотеке
+                </a>
+                
+                <div class="character-detail-container">
+                    <div class="character-detail-header">
+                        <div class="character-detail-avatar">
+                            <i class="${classesDB[character.class]?.icon || 'fas fa-user'}"></i>
+                        </div>
+                        <div class="character-detail-info">
+                            <h2>${character.name}</h2>
+                            <div class="character-detail-meta">
+                                <span class="race-class-tooltip" data-tooltip="${racesDB[character.race]?.description || ''}">
+                                    <i class="${racesDB[character.race]?.icon || 'fas fa-user'}"></i> ${getRaceName(character.race)}
+                                </span> • 
+                                <span class="race-class-tooltip" data-tooltip="${classesDB[character.class]?.description || ''}">
+                                    <i class="${classesDB[character.class]?.icon || 'fas fa-user'}"></i> ${getClassName(character.class)}
+                                </span> ${character.level} уровня • ${getBackgroundName(character.background)}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="character-detail-tabs">
+                        <div class="character-detail-tab active" data-tab="main">Основное</div>
+                        <div class="character-detail-tab" data-tab="abilities">Характеристики</div>
+                        <div class="character-detail-tab" data-tab="skills">Навыки</div>
+                        <div class="character-detail-tab" data-tab="equipment">Снаряжение</div>
+                        <div class="character-detail-tab" data-tab="resources">Ресурсы</div>
+                    </div>
+
+                    <div class="character-detail-content active" id="detail-main">
+                        <h3>Основная информация</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Имя:</label>
+                                <div>${character.name}</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Пол:</label>
+                                <div>${getGenderName(character.gender)}</div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Уровень:</label>
+                                <div>${character.level}</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Раса:</label>
+                                <div>
+                                    <span class="race-class-tooltip" data-tooltip="${racesDB[character.race]?.description || ''}">
+                                        <i class="${racesDB[character.race]?.icon || 'fas fa-user'}"></i> ${getRaceName(character.race)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Класс:</label>
+                                <div>
+                                    <span class="race-class-tooltip" data-tooltip="${classesDB[character.class]?.description || ''}">
+                                        <i class="${classesDB[character.class]?.icon || 'fas fa-user'}"></i> ${getClassName(character.class)}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Предыстория:</label>
+                                <div>${getBackgroundName(character.background)}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="character-detail-content" id="detail-abilities">
+                        <h3>Характеристики</h3>
+                        <div class="abilities-detail-grid">
+                            ${Object.entries(character.abilities).map(([ability, score]) => `
+                                <div class="ability-detail-card">
+                                    <div class="ability-detail-name">${getAbilityFullName(ability)}</div>
+                                    <div class="ability-detail-score">${score}</div>
+                                    <div class="ability-detail-modifier">${getAbilityModifier(score)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="character-detail-content" id="detail-skills">
+                        <h3>Навыки</h3>
+                        <div class="skills-detail-list">
+                            ${character.skills?.map(skill => `
+                                <div class="skill-detail-item proficient">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>${skill.name}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="skill-full-info">
+                            ${character.skills?.map(skill => `
+                                <div class="skill-info-item" style="margin-bottom: 1rem;">
+                                    <h4>${skill.name}</h4>
+                                    <p><strong>Описание:</strong> ${skill.description}</p>
+                                    <p><strong>Использование:</strong> ${skill.usage}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="character-detail-content" id="detail-equipment">
+                        <h3>Снаряжение</h3>
+                        <div class="equipment-management">
+                            <div class="add-equipment-form">
+                                <input type="text" id="new-equipment-item" placeholder="Название предмета">
+                                <button class="btn btn-primary" onclick="addEquipment('${character.id}')">
+                                    <i class="fas fa-plus"></i> Добавить
+                                </button>
+                            </div>
+                            <div class="equipment-detail-list">
+                                ${character.equipment?.map(item => `
+                                    <div class="equipment-detail-item">
+                                        <span>${item}</span>
+                                        <div class="equipment-actions">
+                                            <button class="btn btn-danger" onclick="removeEquipment('${character.id}', '${item}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('') || '<p>Снаряжение не выбрано</p>'}
+                            </div>
+                            ${character.gold ? `
+                                <div class="gold-control" style="margin-top: 1rem;">
+                                    <span>Золото: </span>
+                                    <button class="btn btn-primary" onclick="changeGold('${character.id}', -10)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span id="gold-amount" style="font-weight: bold; min-width: 50px; text-align: center;">${character.gold}</span>
+                                    <button class="btn btn-secondary" onclick="changeGold('${character.id}', 10)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <span>золотых монет</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="character-detail-content" id="detail-resources">
+                        <h3>Управление ресурсами</h3>
+                        <div class="resources-controls">
+                            <div class="resource-control-card">
+                                <div class="resource-control-header">
+                                    <i class="fas fa-heart"></i>
+                                    <h4>Здоровье</h4>
+                                </div>
+                                <div class="resource-control-value" id="detail-hp">${character.resources?.currentHP || calculateMaxHP(character)}</div>
+                                <div class="resource-info">
+                                    <span>Максимум: ${calculateMaxHP(character)}</span>
+                                </div>
+                                <div class="resource-control-buttons">
+                                    <button class="btn btn-primary" onclick="changeResource('${character.id}', 'HP', -1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="changeResource('${character.id}', 'HP', 1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-danger" onclick="resetResource('${character.id}', 'HP')">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="resource-control-card">
+                                <div class="resource-control-header">
+                                    <i class="fas fa-bolt"></i>
+                                    <h4>Мана</h4>
+                                </div>
+                                <div class="resource-control-value" id="detail-mana">${character.resources?.currentMana || 50}</div>
+                                <div class="resource-info">
+                                    <span>Максимум: 50</span>
+                                </div>
+                                <div class="resource-control-buttons">
+                                    <button class="btn btn-primary" onclick="changeResource('${character.id}', 'Mana', -1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="changeResource('${character.id}', 'Mana', 1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-danger" onclick="resetResource('${character.id}', 'Mana')">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="resource-control-card">
+                                <div class="resource-control-header">
+                                    <i class="fas fa-clover"></i>
+                                    <h4>Удача</h4>
+                                </div>
+                                <div class="resource-control-value" id="detail-luck">${character.resources?.currentLuck || 3}</div>
+                                <div class="resource-info">
+                                    <span>Максимум: 3</span>
+                                </div>
+                                <div class="resource-control-buttons">
+                                    <button class="btn btn-primary" onclick="changeResource('${character.id}', 'Luck', -1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="changeResource('${character.id}', 'Luck', 1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-danger" onclick="resetResource('${character.id}', 'Luck')">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="resource-control-card">
+                                <div class="resource-control-header">
+                                    <i class="fas fa-star"></i>
+                                    <h4>Вдохновение</h4>
+                                </div>
+                                <div class="resource-control-value" id="detail-inspiration">${character.resources?.currentInspiration || 1}</div>
+                                <div class="resource-info">
+                                    <span>Максимум: 1</span>
+                                </div>
+                                <div class="resource-control-buttons">
+                                    <button class="btn btn-primary" onclick="changeResource('${character.id}', 'Inspiration', -1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="changeResource('${character.id}', 'Inspiration', 1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-danger" onclick="resetResource('${character.id}', 'Inspiration')">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Инициализация табов на детальной странице
+            initializeDetailTabs();
+        }
+
+        function initializeDetailTabs() {
+            const tabs = document.querySelectorAll('.character-detail-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Убираем активный класс со всех табов
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Добавляем активный класс текущему табу
+                    this.classList.add('active');
+                    
+                    // Скрываем все контенты
+                    document.querySelectorAll('.character-detail-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    // Показываем выбранный контент
+                    document.getElementById(`detail-${tabId}`).classList.add('active');
+                });
+            });
+        }
+
+        // Функции для управления снаряжением
+        function addEquipment(characterId) {
+            const character = characters.find(c => c.id === characterId);
+            if (!character) return;
+
+            const newItemInput = document.getElementById('new-equipment-item');
+            const newItem = newItemInput.value.trim();
+
+            if (newItem) {
+                if (!character.equipment) {
+                    character.equipment = [];
+                }
+                character.equipment.push(newItem);
+                localStorage.setItem('dndCharacters', JSON.stringify(characters));
+                newItemInput.value = '';
+                viewCharacter(characterId);
+                showNotification('Предмет добавлен', 'success');
+            }
+        }
+
+        function removeEquipment(characterId, itemName) {
+            const character = characters.find(c => c.id === characterId);
+            if (!character) return;
+
+            character.equipment = character.equipment.filter(item => item !== itemName);
+            localStorage.setItem('dndCharacters', JSON.stringify(characters));
+            viewCharacter(characterId);
+            showNotification('Предмет удален', 'success');
+        }
+
+        // Функция для изменения золота
+        function changeGold(characterId, amount) {
+            const character = characters.find(c => c.id === characterId);
+            if (!character) return;
+
+            character.gold = Math.max(0, (character.gold || 0) + amount);
+            localStorage.setItem('dndCharacters', JSON.stringify(characters));
+            
+            // Обновляем отображение
+            const goldAmount = document.getElementById('gold-amount');
+            if (goldAmount) {
+                goldAmount.textContent = character.gold;
+            }
+            
+            showNotification(`Золото ${amount > 0 ? 'увеличено' : 'уменьшено'}`, 'success');
+        }
+
+        function loadResources() {
+            const resourcesContainer = document.getElementById('resources');
+            resourcesContainer.innerHTML = '';
+
+            if (characters.length === 0) {
+                resourcesContainer.innerHTML = `
+                    <div class="no-character-selected">
+                        <i class="fas fa-heart"></i>
+                        <h3>Нет персонажей</h3>
+                        <p>Создайте персонажа, чтобы увидеть его ресурсы</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Показываем ресурсы первого персонажа по умолчанию
+            loadCharacterResources(characters[0].id);
+        }
+
+        function loadCharacterResources(characterId) {
+            const character = characters.find(c => c.id === characterId);
+            if (!character) return;
+
+            switchTab('resources');
+
+            const resourcesContainer = document.getElementById('resources');
+            resourcesContainer.innerHTML = `
+                <h2 style="color: var(--primary); margin-bottom: 1.5rem; font-family: 'Times New Roman', serif;">
+                    <i class="fas fa-heart"></i> Ресурсы персонажа: ${character.name}
+                </h2>
+                <a href="javascript:void(0)" class="back-to-library" onclick="switchTab('library')">
+                    <i class="fas fa-arrow-left"></i> Назад к библиотеке
+                </a>
+                <div class="resources-controls">
+                    <div class="resource-control-card">
+                        <div class="resource-control-header">
+                            <i class="fas fa-heart"></i>
+                            <h4>Здоровье</h4>
+                        </div>
+                        <div class="resource-control-value" id="resources-hp">${character.resources?.currentHP || calculateMaxHP(character)}</div>
+                        <div class="resource-info">
+                            <span>Максимум: ${calculateMaxHP(character)}</span>
+                        </div>
+                        <div class="resource-control-buttons">
+                            <button class="btn btn-primary" onclick="changeResource('${character.id}', 'HP', -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button class="btn btn-secondary" onclick="changeResource('${character.id}', 'HP', 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="resetResource('${character.id}', 'HP')">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="resource-control-card">
+                        <div class="resource-control-header">
+                            <i class="fas fa-bolt"></i>
+                            <h4>Мана</h4>
+                        </div>
+                        <div class="resource-control-value" id="resources-mana">${character.resources?.currentMana || 50}</div>
+                        <div class="resource-info">
+                            <span>Максимум: 50</span>
+                        </div>
+                        <div class="resource-control-buttons">
+                            <button class="btn btn-primary" onclick="changeResource('${character.id}', 'Mana', -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button class="btn btn-secondary" onclick="changeResource('${character.id}', 'Mana', 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="resetResource('${character.id}', 'Mana')">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="resource-control-card">
+                        <div class="resource-control-header">
+                            <i class="fas fa-clover"></i>
+                            <h4>Удача</h4>
+                        </div>
+                        <div class="resource-control-value" id="resources-luck">${character.resources?.currentLuck || 3}</div>
+                        <div class="resource-info">
+                            <span>Максимум: 3</span>
+                        </div>
+                        <div class="resource-control-buttons">
+                            <button class="btn btn-primary" onclick="changeResource('${character.id}', 'Luck', -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button class="btn btn-secondary" onclick="changeResource('${character.id}', 'Luck', 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="resetResource('${character.id}', 'Luck')">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="resource-control-card">
+                        <div class="resource-control-header">
+                            <i class="fas fa-star"></i>
+                            <h4>Вдохновение</h4>
+                        </div>
+                        <div class="resource-control-value" id="resources-inspiration">${character.resources?.currentInspiration || 1}</div>
+                        <div class="resource-info">
+                            <span>Максимум: 1</span>
+                        </div>
+                        <div class="resource-control-buttons">
+                            <button class="btn btn-primary" onclick="changeResource('${character.id}', 'Inspiration', -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button class="btn btn-secondary" onclick="changeResource('${character.id}', 'Inspiration', 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="resetResource('${character.id}', 'Inspiration')">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="character-info-card" style="background: var(--card-bg); padding: 1.5rem; border-radius: var(--border-radius); margin-top: 2rem; border: 1px solid var(--secondary);">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem; font-family: 'Times New Roman', serif;">
+                        <i class="fas fa-user"></i> Информация о персонаже
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div>
+                            <p><strong>Раса:</strong> ${getRaceName(character.race)}</p>
+                            <p><strong>Класс:</strong> ${getClassName(character.class)}</p>
+                        </div>
+                        <div>
+                            <p><strong>Уровень:</strong> ${character.level}</p>
+                            <p><strong>Предыстория:</strong> ${getBackgroundName(character.background)}</p>
+                        </div>
+                        <div>
+                            <p><strong>Бонус мастерства:</strong> +${Math.floor((character.level - 1) / 4) + 2}</p>
+                            <p><strong>Класс доспеха:</strong> ${calculateArmorClass(character)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeResource(characterId, resourceType, change) {
+            const character = characters.find(c => c.id === characterId);
+            if (!character) return;
+
+            // Инициализируем ресурсы, если их нет
+            if (!character.resources) {
+                character.resources = {
+                    currentHP: calculateMaxHP(character),
+                    currentMana: 50,
+                    currentLuck: 3,
+                    currentInspiration: 1
+                };
+            }
+
+            const maxValues = {
+                'HP': calculateMaxHP(character),
+                'Mana': 50,
+                'Luck': 3,
+                'Inspiration': 1
+            };
+
+            const currentKey = `current${resourceType}`;
+            const maxValue = maxValues[resourceType];
+            
+            let newValue = character.resources[currentKey] + change;
+            newValue = Math.max(0, Math.min(newValue, maxValue));
+            
+            character.resources[currentKey] = newValue;
+
+            // Сохраняем изменения
+            localStorage.setItem('dndCharacters', JSON.stringify(characters));
+
+            // Обновляем отображение
+            updateResourceDisplay(characterId, resourceType, newValue);
+            
+            showNotification(`${getResourceName(resourceType)} ${change > 0 ? 'увеличено' : 'уменьшено'}`, 'success');
+        }
+
+        function resetResource(characterId, resourceType) {
+            const character = characters.find(c => c.id === characterId);
+            if (!character) return;
+
+            const maxValues = {
+                'HP': calculateMaxHP(character),
+                'Mana': 50,
+                'Luck': 3,
+                'Inspiration': 1
+            };
+
+            const currentKey = `current${resourceType}`;
+            const maxValue = maxValues[resourceType];
+            
+            character.resources[currentKey] = maxValue;
+
+            // Сохраняем изменения
+            localStorage.setItem('dndCharacters', JSON.stringify(characters));
+
+            // Обновляем отображение
+            updateResourceDisplay(characterId, resourceType, maxValue);
+            
+            showNotification(`${getResourceName(resourceType)} восстановлено`, 'success');
+        }
+
+        function updateResourceDisplay(characterId, resourceType, value) {
+            // Обновляем на вкладке ресурсов
+            const resourcesElement = document.getElementById(`resources-${resourceType.toLowerCase()}`);
+            if (resourcesElement) {
+                resourcesElement.textContent = value;
+            }
+
+            // Обновляем на детальной странице
+            const detailElement = document.getElementById(`detail-${resourceType.toLowerCase()}`);
+            if (detailElement) {
+                detailElement.textContent = value;
+            }
+
+            // Обновляем в библиотеке
+            loadLibrary();
+        }
+
+        function getResourceName(resourceType) {
+            const names = {
+                'HP': 'Здоровье',
+                'Mana': 'Мана',
+                'Luck': 'Удача',
+                'Inspiration': 'Вдохновение'
+            };
+            return names[resourceType] || resourceType;
+        }
+
+        function calculateMaxHP(character) {
+            const conModifier = Math.floor((character.abilities.con - 10) / 2);
+            return 10 + conModifier + (character.level - 1) * (6 + conModifier);
+        }
+
+        function calculateArmorClass(character) {
+            const dexModifier = Math.floor((character.abilities.dex - 10) / 2);
+            return 10 + dexModifier;
+        }
+
+        function getAbilityModifier(score) {
+            const modifier = Math.floor((score - 10) / 2);
+            return modifier >= 0 ? `+${modifier}` : `${modifier}`;
+        }
+
+        function getAllSkills() {
+            return Object.keys(allSkills);
+        }
+
+        function getGenderName(genderKey) {
+            const genders = {
+                'male': 'Мужской',
+                'female': 'Женский',
+                'nonbinary': 'Небинарный'
+            };
+            return genders[genderKey] || genderKey;
+        }
+
+        function deleteCharacter(characterId) {
+            if (confirm('Вы уверены, что хотите удалить этого персонажа?')) {
+                characters = characters.filter(c => c.id !== characterId);
+                localStorage.setItem('dndCharacters', JSON.stringify(characters));
+                loadLibrary();
+                
+                // Если удалили текущего персонажа, перезагружаем ресурсы
+                if (characters.length > 0) {
+                    loadCharacterResources(characters[0].id);
+                } else {
+                    loadResources();
+                }
+                
+                showNotification('Персонаж удален', 'success');
+            }
+        }
+
+        function getRaceName(raceKey) {
+            return racesDB[raceKey]?.name || raceKey;
+        }
+
+        function getClassName(classKey) {
+            return classesDB[classKey]?.name || classKey;
+        }
+
+        function getBackgroundName(backgroundKey) {
+            const backgrounds = {
+                acolyte: 'Аколит',
+                charlatan: 'Шарлатан',
+                criminal: 'Преступник',
+                entertainer: 'Артист',
+                'folk-hero': 'Народный герой',
+                'guild-artisan': 'Гильдейский ремесленник',
+                hermit: 'Отшельник',
+                noble: 'Благородный',
+                outlander: 'Чужеземец',
+                sage: 'Мудрец',
+                sailor: 'Моряк',
+                soldier: 'Солдат',
+                urchin: 'Бездомный'
+            };
+            return backgrounds[backgroundKey] || backgroundKey;
+        }
+
+        function getClassIcon(classKey) {
+            const icons = {
+                barbarian: 'fist-raised',
+                bard: 'music',
+                cleric: 'pray',
+                druid: 'leaf',
+                fighter: 'helmet-battle',
+                monk: 'hands',
+                paladin: 'shield-alt',
+                ranger: 'paw',
+                rogue: 'user-secret',
+                sorcerer: 'bolt',
+                warlock: 'hat-wizard',
+                wizard: 'staff'
+            };
+            return icons[classKey] || 'user';
+        }
+
+        function loadSavedData() {
+            // Загрузка истории бросков
+            loadDiceHistory();
+        }
+
+        function loadDiceHistory() {
+            const savedHistory = localStorage.getItem('dndDiceHistory');
+            if (savedHistory) {
+                diceHistory = JSON.parse(savedHistory);
+
+                const historyElement = document.getElementById('dice-history');
+                historyElement.innerHTML = '';
+
+                diceHistory.slice(0, 10).forEach(roll => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'dice-history-item';
+
+                    let historyText = `${roll.formula} = ${roll.total}`;
+                    if (roll.rolls.length > 1) {
+                        historyText += ` (${roll.rolls.join('+')}`;
+                        if (roll.modifier !== 0) {
+                            historyText += `${roll.modifier > 0 ? '+' : ''}${roll.modifier}`;
+                        }
+                        historyText += ')';
+                    }
+
+                    if (roll.isCritical) {
+                        historyText += ' 🎯';
+                    } else if (roll.isFail) {
+                        historyText += ' 💥';
+                    }
+
+                    historyItem.textContent = historyText;
+                    historyElement.appendChild(historyItem);
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
